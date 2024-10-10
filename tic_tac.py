@@ -218,6 +218,6 @@ if __name__ == "__main__":
           "press q to quit the game\n",\
           "also you can use buttons\n",\
           "==============================")
-    # backgr_img = cv.imread('back_ground.png')
-    game = TicTacGame()
+    backgr_img = cv.imread('back_ground.png')
+    game = TicTacGame(backgr_img)
     game.start_game()
