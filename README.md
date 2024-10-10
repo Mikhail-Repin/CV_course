@@ -26,7 +26,7 @@ pip install opencv-python numpy
 1. Clone the repository and navigate to the project directory.
 2. Run the script:
    ```bash
-   python tic_tac_toe.py
+   python tic_tac.py
    ```
 3. The game window will open:
    - Press `ENTER` to start a new game.
