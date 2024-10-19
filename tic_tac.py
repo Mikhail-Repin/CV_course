@@ -10,8 +10,10 @@ def is_inside(bbox, point):
 
 
 class TicTacGame:
-    def __init__(self, bg_img = 255*np.ones((700, 700, 3))):
+    def __init__(self, cross, circle, bg_img = 255*np.ones((700, 700, 3))):
         self.img = bg_img
+        self.cross = cross
+        self.circle = circle
         self.last_sign = [[0, (0, 0)]]
         self.history = np.zeros((3, 3))
         self.table_bbox = [0, 0, 0, 0]
@@ -42,6 +44,12 @@ class TicTacGame:
 
     def make_table(self):
         size = int(self.img.shape[0]*0.8)
+        sc_x = (size//3)/self.circle.shape[1]
+        sc_y = (size//3)/self.circle.shape[0]
+        self.circle = cv.resize(self.circle, (size//3, size//3), self.circle, sc_x, sc_y)
+        sc_x = (size//3)/self.cross.shape[1]
+        sc_y = (size//3)/self.cross.shape[0]
+        self.cross = cv.resize(self.cross, (size//3, size//3), self.cross, sc_x, sc_y)
         game_table = np.zeros((size, size, 3))
         for i in range(1, 3):
             coord = i*size//3
@@ -106,23 +114,25 @@ class TicTacGame:
             self.has_win = True
 
     def draw_O(self, new_x, new_y):
-        cv.circle(self.img, (new_x, new_y), int((self.table_bbox[2]//3)/2.2), (0, 255, 0))
+        self.img[new_y:new_y+int(self.table_bbox[2]//3), new_x:new_x+int(self.table_bbox[2]//3), :] = self.circle
+        # cv.circle(self.img, (new_x, new_y), int((self.table_bbox[2]//3)/2.2), (0, 255, 0))
 
     def draw_X(self, new_x, new_y):
-        cv.line(self.img, (new_x, new_y), (new_x + int(self.table_bbox[2]//3), new_y + int(self.table_bbox[2]//3)), (0, 0, 255), 1)
-        cv.line(self.img, (new_x + int(self.table_bbox[2]//3), new_y), (new_x, new_y + int(self.table_bbox[2]//3)), (0, 0, 255), 1)
+        self.img[new_y:new_y+int(self.table_bbox[2]//3), new_x:new_x+int(self.table_bbox[2]//3), :] = self.cross
+        # cv.line(self.img, (new_x, new_y), (new_x + int(self.table_bbox[2]//3), new_y + int(self.table_bbox[2]//3)), (0, 0, 255), 1)
+        # cv.line(self.img, (new_x + int(self.table_bbox[2]//3), new_y), (new_x, new_y + int(self.table_bbox[2]//3)), (0, 0, 255), 1)
 
     def get_paste_coord(self, x, y):
         x -= self.table_bbox[0]
         y -= self.table_bbox[1]
         j = x//(self.table_bbox[2]//3)
         i = y//(self.table_bbox[3]//3)
-        if self.last_sign[-1][0] == -1 or self.last_sign[-1][0] == 0:
-            new_x = self.table_bbox[2]//3 * j + self.table_bbox[2]//6 + self.table_bbox[0]
-            new_y = self.table_bbox[3]//3 * i + self.table_bbox[3]//6 + self.table_bbox[1]
-        else:
-            new_x = self.table_bbox[2]//3 * j + self.table_bbox[0]
-            new_y = self.table_bbox[3]//3 * i + self.table_bbox[1]
+        # if self.last_sign[-1][0] == -1 or self.last_sign[-1][0] == 0:
+        #     new_x = self.table_bbox[2]//3 * j + self.table_bbox[2]//6 + self.table_bbox[0]
+        #     new_y = self.table_bbox[3]//3 * i + self.table_bbox[3]//6 + self.table_bbox[1]
+        # else:
+        new_x = self.table_bbox[2]//3 * j + self.table_bbox[0]
+        new_y = self.table_bbox[3]//3 * i + self.table_bbox[1]
         return new_x, new_y, i, j
 
     def go_back(self):
@@ -134,8 +144,8 @@ class TicTacGame:
         for i in range(self.history.shape[0]):
             for j in range(self.history.shape[0]):
                 if self.history[i, j] == 1:
-                    new_x = self.table_bbox[2]//3 * j + self.table_bbox[2]//6 + self.table_bbox[0]
-                    new_y = self.table_bbox[3]//3 * i + self.table_bbox[3]//6 + self.table_bbox[1]
+                    new_x = self.table_bbox[2]//3 * j + self.table_bbox[0]
+                    new_y = self.table_bbox[3]//3 * i + self.table_bbox[1]
                     self.draw_O(new_x, new_y)
                     continue
                 if self.history[i, j] == -1:
@@ -218,6 +228,9 @@ if __name__ == "__main__":
           "press q to quit the game\n",\
           "also you can use buttons\n",\
           "==============================")
-    backgr_img = cv.imread('back_ground.png')
-    game = TicTacGame(backgr_img)
+    backgr_img = cv.imread('back_ground.jpg')
+    backgr_img = cv.resize(backgr_img, (720, 720), backgr_img)
+    cross = cv.imread('cross.jpg')
+    circle = cv.imread('circle.jpg')
+    game = TicTacGame(cross, circle, backgr_img)
     game.start_game()
