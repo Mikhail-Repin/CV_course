@@ -24,11 +24,6 @@ pip install opencv-python numpy matplotlib
 1. **Prepare the environment:** Ensure you have Python installed and the necessary libraries as mentioned in the Dependencies section.
 2. **Place the image:**  Put the card image you want to process in the same directory as the script and name it `card_distors.jpg`.
 3. **Place the template images:** Place the digit template images (named `tpl_1.png`, `tpl_2.png`, ..., `tpl_9.png`) in the same directory as the script. These templates should be grayscale images of individual digits.
-4. **Run the script:** Execute the Python script.
-
-   ```bash
-   python your_script_name.py  # Replace your_script_name.py with the actual name of your script file.
-   ```
 
 The script will then:
 
@@ -93,4 +88,3 @@ Here's a breakdown of the main steps in the code:
 - **Automatic Template Generation:** Implement a mechanism to automatically generate or select appropriate digit templates.
 
 Feel free to contribute to this project by submitting pull requests or opening issues for bugs and feature requests.
-```
