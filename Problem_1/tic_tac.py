@@ -21,6 +21,7 @@ class TicTacGame:
         self.start = True
         self.has_win = False
         self.quit = False
+        self.button_state = ""
 
     def check_win(self):
         for i in range(3):
@@ -170,28 +171,13 @@ class TicTacGame:
                 param.update(sign, i, j)
                 return
             elif is_inside(param.buttons["new"], (x, y)):
-                param.draw_button("new", clicked=True)
-                cv.imshow("TicTac", param.img)  # Обновляем окно с измененным изображением
-                cv.waitKey(200)
-                param.init_game()
-                param.draw_button("new", clicked=False)
-                cv.imshow("TicTac", param.img)
+                param.button_state = "new"
                 return
             elif is_inside(param.buttons["back"], (x, y)) and (len(param.last_sign) - 1):
-                param.draw_button("back", clicked=True)
-                cv.imshow("TicTac", param.img)
-                cv.waitKey(200)
-                param.go_back()
-                param.draw_button("back", clicked=False)
-                cv.imshow("TicTac", param.img)
+                param.button_state = "back"
                 return
             elif is_inside(param.buttons["quit"], (x, y)):
-                param.draw_button("quit", clicked=True)
-                cv.imshow("TicTac", param.img)
-                cv.waitKey(200)
-                param.quit = True
-                param.draw_button("quit", clicked=False)
-                cv.imshow("TicTac", param.img)
+                param.button_state = "quit"
                 return
 
     def init_game(self):
@@ -203,6 +189,7 @@ class TicTacGame:
         self.start = False
         self.has_win = False
         self.quit = False
+        self.button_state = ""
 
     def start_game(self):
         cv.startWindowThread()
@@ -213,7 +200,32 @@ class TicTacGame:
                 break
             if self.start:
                 self.init_game()
-            cv.imshow("TicTac", self.img)
+            if self.button_state == "new":
+                self.draw_button("new", clicked=True)
+                cv.imshow("TicTac", self.img)  # Обновляем окно с измененным изображением
+                cv.waitKey(200)
+                self.init_game()
+                self.draw_button("new", clicked=False)
+                cv.imshow("TicTac", self.img)
+                self.button_state = ""
+            elif self.button_state == "back":
+                self.draw_button("back", clicked=True)
+                cv.imshow("TicTac", self.img)
+                cv.waitKey(200)
+                self.go_back()
+                self.draw_button("back", clicked=False)
+                cv.imshow("TicTac", self.img)
+                self.button_state = ""
+            elif self.button_state == "quit":
+                self.draw_button("quit", clicked=True)
+                cv.imshow("TicTac", self.img)
+                cv.waitKey(200)
+                self.quit = True
+                self.draw_button("quit", clicked=False)
+                cv.imshow("TicTac", self.img)
+                self.button_state = ""
+            else:
+                cv.imshow("TicTac", self.img)
             if cv.waitKey(1) & 0xFF == ord("q"):
                 self.quit = True
             if self.has_win and cv.waitKey(1) & 0xFF == ord("\r"):
